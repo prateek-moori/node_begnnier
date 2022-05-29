@@ -3,10 +3,28 @@ import * as fs from "fs/promises"
 
 const server= http.createServer(async (req:any, res)=>{
     console.log(req.url+" "+req.method);
+    let path:string="./views/";
+    switch (req.url){
+        case "/":
+            path=path+"index.html";
+            res.statusCode=200;
+            break;
+        case "/about":
+            path=path+"about.html";
+            res.statusCode=200;
+            break;
+        case "/about.me":
+           res.setHeader("Location","/about");
+            res.statusCode=301;
+            break;
+        default:
+            path=path+"404.html";
+            res.statusCode=404;
+    }
     res.setHeader("Content-type","text/html");
     //send html file
     try {
-        let fileread= await fs.readFile("./views/index.html");
+        let fileread= await fs.readFile(path);
         res.write(fileread);
     }
     catch (error:any)
@@ -14,7 +32,6 @@ const server= http.createServer(async (req:any, res)=>{
         console.log(error);
     }
 
-   // res.write("<p>Hi</p>");
     res.end();
 })
 
